@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangaroo Game</title>
+    <style>
+       @font-face {
+            font-family: 'Sixtyfour-Regular';
+            src: url('fonts/Sixtyfour-Regular.ttf') format('truetype');
+        }
+
+        body {
+            text-align: center;
+        }
+        #title {
+            padding-top: 10px;
+            font-family: 'Sixtyfour-Regular', sans-serif;
+        }
+        #hangaroo-word {
+            font-size: 100px;
+            margin-bottom: 20px;
+            white-space: pre;
+            font-family: 'Sixtyfour-Regular', sans-serif;
+        }
+        #clue-button {
+            margin-top: 10px;
+            cursor: pointer;
+            padding: 2px 5px;
+            background-color: #4cafad;
+            color: white;
+        }
+        #mode-level {
+            font-size: 18px;
+            margin-top: 10px;
+            font-family: 'Sixtyfour-Regular', sans-serif;
+        }
+        #question {
+            margin-top: 20px;
+            font-size: 25px;
+            margin-bottom: 20px;
+            font-family: 'Sixtyfour-Regular', sans-serif;
+        }
+        #score {
+            margin-top: 25px;
+            font-size: 18px;
+            font-family: 'Sixtyfour-Regular', sans-serif;
+        }
+        #life {
+            margin-top: 10px;
+            font-size: 18px;
+            color: rgb(255, 255, 255);
+            font-family: 'Sixtyfour-Regular', sans-serif;
+        }
+        #game-over {
+            color: rgb(0, 0, 0);
+            font-size: 50px;
+            margin-top: 20px;
+            font-family: 'Sixtyfour-Regular', sans-serif;
+        }
+        .keyboard-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .keyboard-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #b7b5b5;
+            padding: 150px;
+            margin-bottom: 10px;
+            width: 100%;
+            max-width: 600px; /* Adjust the max-width as needed */
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        .keyboard-row button {
+            padding: 5px;
+            font-size: 34px;
+            font-family: 'Sixtyfour-Regular', sans-serif;
+            cursor: pointer;
+            width: 10%; /* Adjust button width based on screen width */
+            aspect-ratio: 1; /* Maintain aspect ratio */
+            border: 1px solid #ccc;
+            border-radius: 50%; /* Make the button circular */
+            background-color: #cfcccc;
+            margin-right: 20px; /* Increase spacing between buttons */
+        }
+
+        @media only screen and (max-width: 600px) {
+            .keyboard-row button {
+                width: 10%; /* Adjust button width for smaller screens */
+        }
+    }
+        #clue-options {
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        html {
+        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% {
+            background-position: 0% 50%;
+            }
+            50% {
+            background-position: 100% 50%;
+            }
+            100% {
+            background-position: 0% 50%;
+        }
+    }
+    </style>
+</head>
+<body>
+    <h1 id="title">Hangaroo Game - By Castillo, De Leon, De Joya, Lazo</h1>
+
+    <div id="mode-level"></div>
+    <div id="question"></div>
+    <div id="hangaroo-word"></div>
+    <div id="score">Score: <span id="current-score">0</span></div>
+    <div id="life">Lives: <span id="life-count">3</span></div>
+    <button id="clue-button" onclick="useClue()">
+        <img src="iconhint.png" alt="Use Clue">
+    </button>
+    
+    <div id="clue-options"></div>
+
+    <div class="keyboard-container">
+        <div class="keyboard-box" style="background-color: #4cafad;">
+            <div class="keyboard-row">
+                <button onclick="makeGuess(event)">A</button>
+                <button onclick="makeGuess(event)">B</button>
+                <button onclick="makeGuess(event)">C</button>
+                <button onclick="makeGuess(event)">D</button>
+                <button onclick="makeGuess(event)">E</button>
+                <button onclick="makeGuess(event)">F</button>
+                <button onclick="makeGuess(event)">G</button>
+                <button onclick="makeGuess(event)">H</button>
+                <button onclick="makeGuess(event)">I</button>
+                <button onclick="makeGuess(event)">J</button>
+                <button onclick="makeGuess(event)">K</button>
+                <button onclick="makeGuess(event)">L</button>
+                <button onclick="makeGuess(event)">M</button>
+            </div>
+            <div class="keyboard-row">
+                <button onclick="makeGuess(event)">N</button>
+                <button onclick="makeGuess(event)">O</button>
+                <button onclick="makeGuess(event)">P</button>
+                <button onclick="makeGuess(event)">Q</button>
+                <button onclick="makeGuess(event)">R</button>
+                <button onclick="makeGuess(event)">S</button>
+                <button onclick="makeGuess(event)">T</button>
+                <button onclick="makeGuess(event)">U</button>
+                <button onclick="makeGuess(event)">V</button>
+                <button onclick="makeGuess(event)">W</button>
+                <button onclick="makeGuess(event)">X</button>
+                <button onclick="makeGuess(event)">Y</button>
+                <button onclick="makeGuess(event)">Z</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        const questions = {
+            easy: [
+                { question: "Who is the writer of 'Geet Govind'", answer: "JAYADEV" },
+                { question: "What is the state flower of Haryana?", answer: "LOTUS" },
+                { question: "Smallest Ocean in the World?", answer: "ARCTIC" },
+                { question: "Country known as the 'Land of the Midnight Sun?", answer: "NORWAY" },
+                { question: "Which is the largest coffee-producing state of India", answer: "KARNATAKA" },
+                { question: "Who Developed JavaScript?", answer: "BRENDANEICH" },
+                { question: "Who is the Father of Computer?", answer: "BABBAGE" },
+                { question: "France Greatest General?", answer: "NAPOLEON" },
+                { question: "A common military strategy used by the Spartans?", answer: "PHALANX" },
+                { question: "A great Roman Dictator and General?", answer: "CAESAR" },
+            ],
+            difficult: [
+                { question: "A named storage location in a program that holds data and can be manipulated during the program's execution?", answer: "variable" },
+                { question: "Is a set of rules and tools that allows different software applications to communicate with each other?", answer: "API" },
+                { question: "Program that translates high-level programming code into machine code or an intermediate code so that it can be executed by a computer?", answer: "Compiler" },
+                { question: "A system that tracks changes to a codebase or set of files over time, allowing developers to collaborate, rollback to previous states, and manage changes efficiently?", answer: "Version" },
+                { question: "The process of identifying and fixing errors or bugs in a program to ensure it runs correctly?", answer: "Debugging" },
+                { question: "A way of organizing and storing data to perform operations efficiently?", answer: "DataStructure" },
+                { question: "Is HTML a coding language?", answer: "No" },
+                { question: "Used to exit a loop prematurely or terminate a switch statement, transferring control to the next statement outside the loop or switch?", answer: "Break" },
+                { question: "The ability of a function or method to operate on different types of data or objects, allowing code to be more flexible and reusable?", answer: "Polymorphism" },
+                { question: "A function passed as an argument to another function, which is then invoked inside the outer function?", answer: "Callback" },
+            ],
+            expert: [
+                { question: "Defines the document type and version of HTML being used?", answer: "DOCTYPE" },
+                { question: "Block-level element used to group other elements and create layout structures.", answer: "div" },
+                { question: "An attribute provides alternative text for an image, which is displayed if the image cannot be loaded.", answer: "alt" },
+                { question: "Method is used to submit form data as part of the URL, visible in the address bar?", answer: "Get" },
+                { question: "Used to embed an external content or document within the HTML document?", answer: "iframe" },
+                { question: "A property determines how the total width and height of an element are calculated?", answer: "boxsizing" },
+                { question: "A variable that has been declared but not assigned a value, while 'null' is a deliberate assignment representing no value or no object?", answer: "Undefined" },
+                { question: "A web storage API that allows developers to store key-value pairs in a web browser with no expiration time. The data persists even after the browser is closed", answer: "localstorage" },
+                { question: "What kind of language is HTML?.", answer: "Markup" },
+                { question: "A layout model that allows for the design of complex layouts and the distribution of space within a container, making it easier to design responsive and dynamic user interfaces?", answer: "Flexbox" },
+            ]
+        };
+
+        let currentLevel = "easy";
+        let currentQuestionIndex = 0;
+        let questionsOrder = [];
+        let currentQuestion = {};
+        let guessedWord = [];
+        let incorrectGuesses = 0;
+        let score = 0;
+        let cluesRemaining = 3;
+        let lives = 3;
+
+        function startGame(level) {
+            currentLevel = level;
+            if (currentQuestionIndex === 0) {
+                // Reset game state only if it's the first level
+                currentQuestionIndex = 0;
+                score = 0;
+                cluesRemaining = 3;
+                lives = 3;
+            }
+            shuffleQuestions();
+            startLevel();
+        }
+
+        function shuffleQuestions() {
+            questionsOrder = questions[currentLevel].slice(); // Copy the array
+            for (let i = questionsOrder.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questionsOrder[i], questionsOrder[j]] = [questionsOrder[j], questionsOrder[i]];
+            }
+        }
+
+        function startLevel() {
+            currentQuestion = questionsOrder[currentQuestionIndex];
+            guessedWord = currentQuestion.answer.split('').map(char => (char === ' ' ? ' ' : '_'));
+            incorrectGuesses = 0;
+            updateDisplay();
+        }
+
+        function makeGuess(event) {
+            if (event.target.tagName === 'BUTTON') {
+                const letter = event.target.textContent.toLowerCase();
+                let found = false;
+                for (let i = 0; i < currentQuestion.answer.length; i++) {
+                    if (currentQuestion.answer[i].toLowerCase() === letter) {
+                        guessedWord[i] = currentQuestion.answer[i];
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    lives--; // Decrement lives when an incorrect guess is made
+                    if (lives === 0) {
+                        endGame();
+                        return;
+                    }
+                }
+                updateDisplay();
+                checkLevelCompletion();
+            }
+        }
+
+
+        function updateDisplay() {
+            const hangarooWordDisplay = guessedWord.join(' ');
+            document.getElementById('hangaroo-word').textContent = hangarooWordDisplay;
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('life-count').textContent = lives;
+            document.getElementById('question').textContent = currentQuestion.question;
+            document.getElementById('mode-level').textContent = `Mode: ${currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)} Level: ${currentQuestionIndex + 1}`;
+        }
+
+        function useClue() {
+            if (cluesRemaining > 0) {
+                // Check if player has enough points for a clue
+                if (score >= 25) {
+                    // Display buttons for choosing between consonant and vowel
+                    document.getElementById('clue-options').innerHTML = `
+                        <button onclick="revealConsonant()">Consonant</button>
+                        <button onclick="revealVowel()">Vowel</button>
+                    `;
+                } else {
+                    alert("Pay 25 points to have a clue!");
+                }
+            } else {
+                alert("No clues remaining!");
+            }
+        }
+
+        function revealConsonant() {
+            let unrevealedIndex = guessedWord.indexOf('_');
+            while (unrevealedIndex !== -1 && !'bcdfghjklmnpqrstvwxyz'.includes(currentQuestion.answer[unrevealedIndex].toLowerCase())) {
+                unrevealedIndex = guessedWord.indexOf('_', unrevealedIndex + 1);
+            }
+            if (unrevealedIndex !== -1) {
+                guessedWord[unrevealedIndex] = currentQuestion.answer[unrevealedIndex];
+                score -= 25;
+                cluesRemaining--;
+                updateDisplay();
+                checkLevelCompletion();
+            } else {
+                alert("No clues available for consonants!");
+            }
+            // Clear clue options
+            document.getElementById('clue-options').innerHTML = '';
+        }
+
+        function revealVowel() {
+            let unrevealedIndex = guessedWord.indexOf('_');
+            while (unrevealedIndex !== -1 && !'aeiou'.includes(currentQuestion.answer[unrevealedIndex].toLowerCase())) {
+                unrevealedIndex = guessedWord.indexOf('_', unrevealedIndex + 1);
+            }
+            if (unrevealedIndex !== -1) {
+                guessedWord[unrevealedIndex] = currentQuestion.answer[unrevealedIndex];
+                score -= 25;
+                cluesRemaining--;
+                updateDisplay();
+                checkLevelCompletion();
+            } else {
+                alert("No more clues available for vowels!");
+            }
+            // Clear clue options
+            document.getElementById('clue-options').innerHTML = '';
+        }
+
+        function checkLevelCompletion() {
+            if (guessedWord.join('') === currentQuestion.answer) {
+                score += 10;
+                currentQuestionIndex++;
+                document.getElementById('clue-options').innerHTML = '';
+                if (currentQuestionIndex < 10) {
+                    startLevel();
+                } else {
+                    // Move to the next level
+                    switch (currentLevel) {
+                        case "easy":
+                            currentLevel = "difficult";
+                            break;
+                        case "difficult":
+                            currentLevel = "expert";
+                            break;
+                        case "expert":
+                            // The player completed all levels
+                            alert("Congratulations! You completed all levels!");
+                            location.reload();
+                            break;
+                    }
+                    currentQuestionIndex = 0;
+                    shuffleQuestions();
+                    startLevel();
+                }
+            }
+        }
+
+        function endGame() {
+            alert("Sad, Game Overrrrr! Final Score: " + score);
+            location.reload();
+        }
+
+        // Start the game initially
+        startGame("easy");
+    </script>
+</body>
+</html>
